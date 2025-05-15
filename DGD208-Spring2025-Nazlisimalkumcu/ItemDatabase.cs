@@ -28,7 +28,7 @@ public static class ItemDatabase
             Duration = 2.5f
         },
         new Item { 
-            Name = "Chicken Sticks", 
+            Name = "Stick Treats", 
             Type = ItemType.Food, 
             CompatibleWith = new List<PetType> { PetType.Cat }, 
             AffectedStat = PetStat.Hunger, 
