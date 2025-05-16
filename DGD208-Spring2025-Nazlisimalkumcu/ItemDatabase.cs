@@ -6,7 +6,7 @@ public static class ItemDatabase
         new Item { 
             Name = "Chew Stick", 
             Type = ItemType.Food, 
-            CompatibleWith = new List<PetType> { PetType.Dog }, 
+            CompatibleWith = new List<PetType> { PetType.Puppy }, 
             AffectedStat = PetStat.Hunger, 
             EffectAmount = 15,
             Duration = 2.5f  // Takes 2.5 seconds to eat
@@ -14,7 +14,7 @@ public static class ItemDatabase
         new Item { 
             Name = "Wet Dog Food", 
             Type = ItemType.Food, 
-            CompatibleWith = new List<PetType> { PetType.Dog }, 
+            CompatibleWith = new List<PetType> { PetType.Puppy }, 
             AffectedStat = PetStat.Hunger, 
             EffectAmount = 30,
             Duration = 3.0f  // Takes 3 seconds to eat
@@ -22,7 +22,7 @@ public static class ItemDatabase
         new Item { 
             Name = "Cat Food", 
             Type = ItemType.Food, 
-            CompatibleWith = new List<PetType> { PetType.Cat }, 
+            CompatibleWith = new List<PetType> { PetType.Kitten }, 
             AffectedStat = PetStat.Hunger, 
             EffectAmount = 25,
             Duration = 2.5f
@@ -30,7 +30,7 @@ public static class ItemDatabase
         new Item { 
             Name = "Stick Treats", 
             Type = ItemType.Food, 
-            CompatibleWith = new List<PetType> { PetType.Cat }, 
+            CompatibleWith = new List<PetType> { PetType.Kitten }, 
             AffectedStat = PetStat.Hunger, 
             EffectAmount = 20,
             Duration = 1.5f  // Quick treat
