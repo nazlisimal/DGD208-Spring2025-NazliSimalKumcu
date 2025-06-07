@@ -1,16 +1,10 @@
-/// <summary>
-/// A generic menu system that can display a list of items and get user selection.
-/// </summary>
-/// <typeparam name="T">The type of items in the menu</typeparam>
+
 public class Menu<T>
 {
     private readonly List<T> _items;
     private readonly string _title;
     private readonly Func<T, string> _displaySelector;
 
-    /// <summary>
-    /// Creates a new menu with the specified items and display format.
-    /// </summary>
     public Menu(string title, List<T> items, Func<T, string> displaySelector)
     {
         _title = title;
@@ -18,9 +12,6 @@ public class Menu<T>
         _displaySelector = displaySelector ?? (item => item?.ToString() ?? "");
     }
 
-    /// <summary>
-    /// Displays the menu and gets the user's selection.
-    /// </summary>
     public T ShowAndGetSelection()
     {
         if (_items.Count == 0)
