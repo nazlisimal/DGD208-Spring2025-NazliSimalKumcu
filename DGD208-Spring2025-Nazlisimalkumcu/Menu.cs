@@ -1,4 +1,7 @@
-
+/// <summary>Add commentMore actions
+/// A generic menu system that can display a list of items and get user selection.
+/// </summary>
+/// <typeparam name="T">The type of items in the menu</typeparam>
 public class Menu<T>
 {
     private readonly List<T> _items;
