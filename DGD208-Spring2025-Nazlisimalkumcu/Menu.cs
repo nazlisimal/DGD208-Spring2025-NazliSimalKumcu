@@ -26,16 +26,16 @@ public class Menu<T>
 
         while (true)
         {
-            Console.Clear();
-            Console.WriteLine($"=== {_title} ===\n");
+            Console.WriteLine($"\n=== {_title} ===\n");
 
+            // Display all menu items with numbers
             for (int i = 0; i < _items.Count; i++)
             {
                 Console.WriteLine($"{i + 1}. {_displaySelector(_items[i])}");
             }
 
             Console.WriteLine("\n0. Go Back\n");
-            Console.Write("Enter selection: ");
+            Console.Write("Enter selection (0-{0}): ", _items.Count);
             string input = Console.ReadLine();
 
             if (int.TryParse(input, out int selection))
@@ -46,7 +46,8 @@ public class Menu<T>
                     return _items[selection - 1];
             }
 
-            Console.WriteLine("Invalid selection. Press any key to try again.");
+            Console.WriteLine($"Invalid selection. Please enter a number between 0 and {_items.Count}.");
+            Console.WriteLine("Press any key to try again...");
             Console.ReadKey();
         }
     }
