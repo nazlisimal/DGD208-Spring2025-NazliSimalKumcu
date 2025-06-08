@@ -7,26 +7,37 @@ public class Game
 
     public async Task GameLoop()
     {
-        // Initialize the game
-        Initialize();
-
-        // Main game loop
-        _isRunning = true;
-        while (_isRunning)
+        try
         {
-            // Display menu and get player input
-            string userChoice = GetUserInput();
+            // Initialize the game
+            Initialize();
 
-            // Process the player's choice
-            await ProcessUserChoice(userChoice);
+            // Main game loop
+            _isRunning = true;
+            while (_isRunning)
+            {
+                // Display menu and get player input
+                string userChoice = GetUserInput();
+
+                // Process the player's choice
+                await ProcessUserChoice(userChoice);
+            }
+
+            Console.WriteLine("Thanks for playing!");
         }
-
-        Console.WriteLine("Thanks for playing!");
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+            Console.WriteLine("Press any key to exit...");
+            Console.ReadKey();
+        }
     }
 
     private void Initialize()
     {
-        // Game initialization logic here if needed
+        Console.Title = "Pet Simulator";
+        Console.WriteLine("Welcome to Pet Simulator!");
+        Console.WriteLine("========================\n");
     }
 
     private string GetUserInput()
@@ -44,31 +55,44 @@ public class Game
 
     private async Task ProcessUserChoice(string choice)
     {
-        switch (choice)
+        try
         {
-            case "Adopt a Pet":
-                AdoptPet();
-                break;
+            switch (choice)
+            {
+                case "Adopt a Pet":
+                    AdoptPet();
+                    break;
 
-            case "View Pets":
-                _manager.ShowAllPets();
-                Console.WriteLine("\nPress any key to return to the menu...");
-                Console.ReadKey();
-                break;
+                case "View Pets":
+                    _manager.ShowAllPets();
+                    Console.WriteLine("\nPress any key to return to the menu...");
+                    Console.ReadKey();
+                    break;
 
-            case "Use Item":
-                UseItemOnPet();
-                break;
+                case "Use Item":
+                    await UseItemOnPet();
+                    break;
 
-            case "Show Creator Info":
-                Console.WriteLine($"Created by {_studentName}, {_studentNumber}");
-                Console.WriteLine("\nPress any key to return to the menu...");
-                Console.ReadKey();
-                break;
+                case "Show Creator Info":
+                    Console.WriteLine($"Created by {_studentName}, {_studentNumber}");
+                    Console.WriteLine("\nPress any key to return to the menu...");
+                    Console.ReadKey();
+                    break;
 
-            case "Exit":
-                _isRunning = false;
-                break;
+                case "Exit":
+                    _isRunning = false;
+                    break;
+
+                default:
+                    Console.WriteLine("Invalid choice. Please try again.");
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
         }
     }
 
@@ -100,17 +124,96 @@ public class Game
         Console.ReadKey();
     }
 
-    private void UseItemOnPet()
+    private async Task UseItemOnPet()
     {
         List<Pet> pets = _manager.GetAllPets();
-        var petMenu = new Menu<Pet>("Select Pet", pets, p => p.Name);
+        if (pets.Count == 0)
+        {
+            Console.WriteLine("You don't have any pets to use items on!");
+            Console.WriteLine("\nPress any key to return to the menu...");
+            Console.ReadKey();
+            return;
+        }
+
+        var petMenu = new Menu<Pet>("Select Pet", pets, p => p.ToString());
         Pet selectedPet = petMenu.ShowAndGetSelection();
         if (selectedPet == null) return;
 
-        var itemMenu = new Menu<Item>("Select Item", ItemDatabase.Items, i => i.Name);
-        Item item = itemMenu.ShowAndGetSelection();
-        if (item == null) return;
+        // Filter items for the selected pet
+        var compatibleItems = ItemDatabase.Items
+            .Where(i => i.CompatibleWith.Contains(selectedPet.Type))
+            .ToList();
 
-        _ = selectedPet.UseItem(item);
+        if (compatibleItems.Count == 0)
+        {
+            Console.WriteLine($"No items available for {selectedPet.Name}!");
+            Console.WriteLine("\nPress any key to return to the menu...");
+            Console.ReadKey();
+            return;
+        }
+
+        // Group items by type
+        var foodItems = compatibleItems.Where(i => i.Type == ItemType.Food).ToList();
+        var toyItems = compatibleItems.Where(i => i.Type == ItemType.Toy).ToList();
+        var sleepItems = compatibleItems.Where(i => i.Type == ItemType.Sleep).ToList();
+
+        Console.WriteLine("\n=== Available Items for " + selectedPet.Name + " ===\n");
+
+        if (foodItems.Count > 0)
+        {
+            Console.WriteLine("Food Items:");
+            Console.WriteLine("-----------");
+            for (int i = 0; i < foodItems.Count; i++)
+            {
+                var item = foodItems[i];
+                Console.WriteLine($"{i + 1}. {item.Name} (Affects {item.AffectedStat} by {item.EffectAmount})");
+            }
+        }
+
+        if (toyItems.Count > 0)
+        {
+            Console.WriteLine("\nToy Items:");
+            Console.WriteLine("-----------");
+            for (int i = 0; i < toyItems.Count; i++)
+            {
+                var item = toyItems[i];
+                Console.WriteLine($"{foodItems.Count + i + 1}. {item.Name} (Affects {item.AffectedStat} by {item.EffectAmount})");
+            }
+        }
+
+        if (sleepItems.Count > 0)
+        {
+            Console.WriteLine("\nSleep Items:");
+            Console.WriteLine("------------");
+            for (int i = 0; i < sleepItems.Count; i++)
+            {
+                var item = sleepItems[i];
+                Console.WriteLine($"{foodItems.Count + toyItems.Count + i + 1}. {item.Name} (Affects {item.AffectedStat} by {item.EffectAmount})");
+            }
+        }
+
+        Console.WriteLine("\n0. Go Back\n");
+        Console.Write($"Enter selection (0-{compatibleItems.Count}): ");
+        
+        if (int.TryParse(Console.ReadLine(), out int selection))
+        {
+            if (selection == 0) return;
+            if (selection > 0 && selection <= compatibleItems.Count)
+            {
+                Item selectedItem = compatibleItems[selection - 1];
+                await selectedPet.UseItem(selectedItem);
+            }
+            else
+            {
+                Console.WriteLine("Invalid selection!");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Invalid input!");
+        }
+
+        Console.WriteLine("\nPress any key to return to the menu...");
+        Console.ReadKey();
     }
 }
