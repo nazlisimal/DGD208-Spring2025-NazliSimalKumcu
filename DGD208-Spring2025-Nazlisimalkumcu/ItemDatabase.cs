@@ -135,7 +135,7 @@ public static class ItemDatabase
             Duration = 2.0f
         },
         new Item {
-            Name = "Water Fouintain,
+            Name = "Water Fouintain",
             Type = ItemType.Toy,
             CompatibleWith = new List<PetTypes> { PetTypes.Turtle },
             AffectedStat = PetStat.Fun,
@@ -236,4 +236,3 @@ public static class ItemDatabase
         }
     };
     }
-}
